@@ -263,7 +263,7 @@ const updateAccountDetails = asyncHandler(async(req,res) =>{
         throw new ApiError(400,"All fields are required")
     }
 
-    const user = User.findById(
+    const user = User.findByIdAndUpdate(
         req.user?._id,
         {
             $set:{
@@ -281,6 +281,71 @@ const updateAccountDetails = asyncHandler(async(req,res) =>{
     )
 })
 
+const updateUserAvatar = asyncHandler(async(req,res) =>{
+    const avatarLocalPath = req.file?.path
+
+    if(!avatarLocalPath){
+        throw new ApiError(400,"Avatar field is missing")
+    }
+
+    const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+    if(!avatar.url){
+        throw new ApiError(400,"Error while uploading on avatar")
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set:{
+                avatar:avatar.url
+            }
+        },
+        {new:true}
+    )
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,user,"Avatar uploaded successfully")
+    )
+
+
+})
+
+const updateUserCoverImage = asyncHandler(async(req,res) =>{
+    coverImageLocalPath = req.file?.path;
+
+    if(!coverImageLocalPath){
+        throw new ApiError(400,"CoverImage is missing")
+    }
+
+    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
+
+    if(!coverImage.url){
+        throw new ApiError(400,"Error while uploading the coverimage")
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set:{
+                coverImage:coverImage.url
+            }
+        },
+        {new:true}
+    )
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,user,"Cover image uploaded successfully")
+    )
+
+
+
+})
+
 export {
     registerUser,
     loginUser,
@@ -288,5 +353,6 @@ export {
     refreshAccessToken,
     changeCurrentPassword,
     getCurrentUser,
-    updateAccountDetails
+    updateAccountDetails,
+    updateUserAvatar
 }
