@@ -273,6 +273,12 @@ const updateAccountDetails = asyncHandler(async(req,res) =>{
         },
         {new:true}
     ).select("-password")
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,user,"Accout detailes updated success fully")
+    )
 })
 
 export {
@@ -281,5 +287,6 @@ export {
     logoutUser,
     refreshAccessToken,
     changeCurrentPassword,
-    getCurrentUser
+    getCurrentUser,
+    updateAccountDetails
 }
